@@ -17,3 +17,8 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+- script: |
+    java -version
+    echo "JAVA_HOME is: $JAVA_HOME"
+  displayName: 'Check Java Version'
+
