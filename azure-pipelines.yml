@@ -10,6 +10,11 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+- task: Bash@3
+  displayName: 'Echo Maven Version'
+  inputs:
+    targetType: 'inline'
+    script: 'mvn -version'
 - script: echo Hellozzzzz, world!
   displayName: 'Run a one-line script'
 
