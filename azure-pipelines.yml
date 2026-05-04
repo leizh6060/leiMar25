@@ -1,29 +1,26 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+- main    # Runs whenever code is pushed to the main branch
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest' # The build machine type
 
 steps:
-- task: Bash@3
-  displayName: 'Echo Maven Version'
+- task: Maven@4           # Built-in task for Java Maven projects
   inputs:
-    targetType: 'inline'
-    script: 'mvn -version'
-- script: echo Hellozzzzz, world!
-  displayName: 'Run a one-line script'
+    mavenPomFile: 'pom.xml'
+    goals: 'package'      # Compiles, tests, and packages the app
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.17' # Specifies the Java version (e.g., JDK 17)
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-- script: |
-    java -version
-    echo "JAVA_HOME is: $JAVA_HOME"
-  displayName: 'Check Java Version'
+- task: CopyFiles@2       # Copies the generated JAR file for later use
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: '**/target/*.jar'
+    TargetFolder: '$(build.artifactstagingdirectory)'
 
+- task: PublishBuildArtifacts@1 # Saves the JAR as a downloadable artifact
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+    ArtifactName: 'drop'
